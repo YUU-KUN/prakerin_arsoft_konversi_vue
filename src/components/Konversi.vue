@@ -10,12 +10,18 @@
               </p>
               <p class="card-description float-right">
                 <b-button
+                  variant="danger "
+                  v-on:click="getData"
+                >
+                  <i class="mdi mdi-refresh btn-icon-prepend"></i>
+                </b-button>
+                &nbsp;&nbsp;
+                <b-button
                   variant="success "
                   v-b-modal.modalEdit
                   v-on:click="Add"
                 >
-                  <!-- <i class="mdi mdi-plus btn-icon-prepend"></i> -->
-                  <span> + </span>
+                  <i class="mdi mdi-plus btn-icon-prepend"></i>
                   Produk
                 </b-button>
               </p>
@@ -49,14 +55,14 @@
                       v-b-modal.modalEdit
                     >
                       <i class="mdi mdi-pencil btn-icon-prepend"></i>
-                      Ubah </b-button
+                       </b-button
                     >&nbsp;
                     <b-button
                       size="sm"
                       variant="danger"
                       v-on:click="Drop(data.item.id)"
                     >
-                      <i class="mdi mdi-delete btn-icon-prepend"></i> Hapus
+                      <i class="mdi mdi-delete btn-icon-prepend"></i>
                     </b-button>
                   </template>
                 </b-table>

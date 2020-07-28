@@ -4,6 +4,7 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
+import '@mdi/font/css/materialdesignicons.css'
 
 // Install BootstrapVue
 Vue.use(BootstrapVue);
