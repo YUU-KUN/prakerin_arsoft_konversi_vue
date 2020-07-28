@@ -10,14 +10,16 @@
               </p>
               <p class="card-description float-right">
                 <b-button
-                  variant="danger "
                   v-on:click="getData"
+                  data-toggle="tooltip"
+                  data-placement="right"
+                  title="Refresh Data"
                 >
                   <i class="mdi mdi-refresh btn-icon-prepend"></i>
                 </b-button>
                 &nbsp;&nbsp;
                 <b-button
-                  variant="success "
+                  variant="success"
                   v-b-modal.modalEdit
                   v-on:click="Add"
                 >
