@@ -3,7 +3,10 @@ import App from "./App.vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 
-import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
+import {
+  BootstrapVue,
+  IconsPlugin
+} from "bootstrap-vue";
 import '@mdi/font/css/materialdesignicons.css'
 
 // Install BootstrapVue
@@ -18,6 +21,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.config.productionTip = false;
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api' //menyingkat axios
 
 new Vue({
   render: (h) => h(App),

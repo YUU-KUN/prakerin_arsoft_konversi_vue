@@ -9,24 +9,24 @@
                 <b>Management Produk</b>
               </p>
               <p class="card-description float-right">
+                <!-- tombol untuk refresh Data -->
                 <b-button
                   v-on:click="getData"
                   data-toggle="tooltip"
-                  data-placement="right"
+                  data-placement="bottom"
                   title="Refresh Data"
                 >
+                
                   <i class="mdi mdi-refresh btn-icon-prepend"></i>
-                </b-button>
-                &nbsp;&nbsp;
-                <b-button
-                  variant="success"
-                  v-b-modal.modalEdit
-                  v-on:click="Add"
-                >
+                </b-button>&nbsp;&nbsp;
+                <b-button variant="success" v-b-modal.modalEdit v-on:click="Add">
                   <i class="mdi mdi-plus btn-icon-prepend"></i>
                   Produk
                 </b-button>
               </p>
+              <!-- Search Data -->
+              <b-form-input type="text" v-on:keyup.enter="searching" v-model="search" placeholder="Cari Produk..."></b-form-input>
+                  <div class="dropdown-divider"></div> 
               <div class="table-responsive">
                 <b-table striped hover :items="produks" :fields="fields">
                   <template v-slot:cell(aksi)="data">
@@ -37,9 +37,8 @@
                       v-b-modal.modalTambahBerat
                     >
                       <!-- <i class="mdi mdi-pencil btn-icon-prepend"></i>  -->
-                      <span class="material-icons"> + </span> </b-button
-                    >&nbsp;
-
+                      <span class="material-icons">+</span>
+                    </b-button>&nbsp;
                     <b-button
                       size="sm"
                       variant="danger"
@@ -47,9 +46,8 @@
                       v-b-modal.modalKurangBerat
                     >
                       <!-- <i class="mdi mdi-pencil btn-icon-prepend"></i>  -->
-                      <span class="material-icons"> - </span> </b-button
-                    >&nbsp;
-
+                      <span class="material-icons">-</span>
+                    </b-button>&nbsp;
                     <b-button
                       size="sm"
                       variant="info"
@@ -57,13 +55,8 @@
                       v-b-modal.modalEdit
                     >
                       <i class="mdi mdi-pencil btn-icon-prepend"></i>
-                       </b-button
-                    >&nbsp;
-                    <b-button
-                      size="sm"
-                      variant="danger"
-                      v-on:click="Drop(data.item.id)"
-                    >
+                    </b-button>&nbsp;
+                    <b-button size="sm" variant="danger" v-on:click="Drop(data.item.id)">
                       <i class="mdi mdi-delete btn-icon-prepend"></i>
                     </b-button>
                   </template>
@@ -87,6 +80,42 @@
                   <strong class="text-success">{{ message }}</strong>
                 </b-toast>
               </div>
+
+              <!-- COBA CARD -->
+              <!-- <b-card-group deck>
+                <b-card v-for="(produk, index) in produks" :key="index" :title="nama_produk">
+                  <b-card-text>{{ berat_produk }} {{satuan_berat}}</b-card-text>
+                  <template v-slot:cell(aksi)="data">
+                    <b-button
+                      size="sm"
+                      variant="success"
+                      v-on:click="TambahBerat(data.item)"
+                      v-b-modal.modalTambahBerat
+                    >
+                      <span class="material-icons">+</span>
+                    </b-button>&nbsp;
+                    <b-button
+                      size="sm"
+                      variant="danger"
+                      v-on:click="KurangBerat(data.item)"
+                      v-b-modal.modalKurangBerat
+                    >
+                      <span class="material-icons">-</span>
+                    </b-button>&nbsp;
+                    <b-button
+                      size="sm"
+                      variant="info"
+                      v-on:click="Edit(data.item)"
+                      v-b-modal.modalEdit
+                    >
+                      <i class="mdi mdi-pencil btn-icon-prepend"></i>
+                    </b-button>&nbsp;
+                    <b-button size="sm" variant="danger" v-on:click="Drop(data.item.id)">
+                      <i class="mdi mdi-delete btn-icon-prepend"></i>
+                    </b-button>
+                  </template>
+                </b-card>
+              </b-card-group> -->
             </div>
           </div>
         </div>
@@ -142,9 +171,7 @@
       <form ref="form">
         <h4>{{ nama_produk }}</h4>
         <div class="form-group">
-          <label for="berat_tambah" class="col-form-label"
-            >Berat {{ nama_produk }}</label
-          >
+          <label for="berat_tambah" class="col-form-label">Berat {{ nama_produk }}</label>
           <input
             type="text"
             name="berat_tambah"
@@ -178,9 +205,7 @@
       <form ref="form">
         <h4>{{ nama_produk }}</h4>
         <div class="form-group">
-          <label for="berat_kurang" class="col-form-label"
-            >Berat {{ nama_produk }}</label
-          >
+          <label for="berat_kurang" class="col-form-label">Berat {{ nama_produk }}</label>
           <input
             type="text"
             name="berat_kurang"
@@ -212,7 +237,7 @@
 
 <script>
 module.exports = {
-  data: function() {
+  data: function () {
     return {
       id: "",
       nama_produk: "",
@@ -221,7 +246,8 @@ module.exports = {
       berat_tambah: "",
       berat_kurang: "",
       produks: [],
-
+      
+      refreshData: true,
       search: "",
       action: "",
       message: "",
@@ -234,13 +260,11 @@ module.exports = {
   },
 
   methods: {
-    getData: function() {
-      let offset = (this.currentPage - 1) * this.perPage;
+    getData: function () {
+      let conf = { headers: { "Authorization" : 'Bearer ' + this.key } };
       this.$bvToast.show("loadingToast");
       this.axios
-        .get(
-          "http://127.0.0.1:8000/api/getProduk/" + this.perPage + "/" + offset
-        )
+        .get("getProduk", conf)
         .then((response) => {
           if (response.data.status == 1) {
             this.$bvToast.hide("loadingToast");
@@ -257,7 +281,7 @@ module.exports = {
         });
     },
 
-    pagination: function() {
+    pagination: function () {
       if (this.search == "") {
         this.getData();
       } else {
@@ -265,14 +289,65 @@ module.exports = {
       }
     },
 
-    Add: function() {
+    // refresh: function (){
+    //   if (this.refresh == true){
+    //     this.getData();
+    //   }
+    // },
+
+    searching : function(){
+      let offset = (this.currentPage - 1) * this.perPage;
+      this.$bvToast.show("loadingToast");
+      let form = new FormData();
+      form.append("find", this.search);
+      this.axios.post( "/cariProduk/" + this.perPage + "/" + offset, form)
+      .then(response => {
+          if(response.data.status == 1){
+          this.$bvToast.hide("loadingToast");
+          this.produks = response.data.produk;
+          this.rows = response.data.count;
+        } else {
+          this.$bvToast.hide("loadingToast");
+          this.message = "Gagal menampilkan Data Produk."
+          this.$bvToast.show("message");
+        }
+      })
+      .catch(error => {
+          console.log(error);
+      });
+    },
+
+    // searching : function(){
+    //   let offset = (this.currentPage - 1) * this.perPage;
+    //   this.$bvToast.show("loadingToast");
+    //   let form = new FormData();
+    //   form.append("find", this.search);
+    //   this.axios.post( "cariProduk", + this.perPage + "/" + offset, form)
+    //   .then(response => {
+    //       if(response.data.status == 1){
+    //       this.$bvToast.hide("loadingToast");
+    //       this.data_poin = response.data.produk;
+    //       this.rows = response.data.count;
+    //     } else {
+    //       this.$bvToast.hide("loadingToast");
+    //       this.message = "Gagal menampilkan Data Produk."
+    //       this.$bvToast.show("message");
+    //     }
+        
+    //   })
+    //   .catch(error => {
+    //       console.log(error);
+    //   });
+    // },
+
+    Add: function () {
       this.action = "insert";
       this.nama_produk = "";
       this.berat_produk = "";
       this.satuan_berat = "";
     },
 
-    TambahBerat: function(item) {
+    TambahBerat: function (item) {
       this.action = "tambahBerat";
       this.id = item.id;
       this.nama_produk = item.nama_produk;
@@ -280,7 +355,7 @@ module.exports = {
       this.satuan_berat = item.satuan_berat;
     },
 
-    KurangBerat: function(item) {
+    KurangBerat: function (item) {
       this.action = "kurangBerat";
       this.id = item.id;
       this.nama_produk = item.nama_produk;
@@ -288,7 +363,7 @@ module.exports = {
       this.satuan_berat = item.satuan_berat;
     },
 
-    Edit: function(item) {
+    Edit: function (item) {
       this.action = "update";
       this.id = item.id;
       this.nama_produk = item.nama_produk;
@@ -296,7 +371,7 @@ module.exports = {
       this.satuan_berat = item.satuan_berat;
     },
 
-    Save: function() {
+    Save: function () {
       this.$bvToast.show("loadingToast");
       if (this.action === "insert") {
         let form = new FormData();
@@ -306,7 +381,7 @@ module.exports = {
         form.append("satuan_berat", this.satuan_berat);
 
         this.axios
-          .post("http://127.0.0.1:8000/api/createProduk", form)
+          .post("createProduk", form)
           .then((response) => {
             this.$bvToast.hide("loadingToast");
             if (this.search == "") {
@@ -326,7 +401,7 @@ module.exports = {
           satuan_berat: this.satuan_berat,
         };
         this.axios
-          .put("http://localhost:8000/api/tambahBerat/" + this.id, form)
+          .put("tambahBerat/" + this.id, form)
           .then((response) => {
             this.$bvToast.hide("loadingToast");
             if (this.search == "") {
@@ -346,7 +421,7 @@ module.exports = {
           satuan_berat: this.satuan_berat,
         };
         this.axios
-          .put("http://localhost:8000/api/kurangBerat/" + this.id, form)
+          .put("kurangBerat/" + this.id, form)
           .then((response) => {
             this.$bvToast.hide("loadingToast");
             if (this.search == "") {
@@ -367,7 +442,7 @@ module.exports = {
           satuan_berat: this.satuan_berat,
         };
         this.axios
-          .put("http://localhost:8000/api/updateProduk/" + this.id, form)
+          .put("updateProduk/" + this.id, form)
           .then((response) => {
             this.$bvToast.hide("loadingToast");
             if (this.search == "") {
@@ -384,11 +459,11 @@ module.exports = {
       }
     },
 
-    Drop: function(id) {
+    Drop: function (id) {
       if (confirm("Apakah anda yakin ingin menghapus data ini?")) {
         this.$bvToast.show("loadingToast");
         this.axios
-          .delete("http://127.0.0.1:8000/api/hapusProduk/" + id)
+          .delete("hapusProduk/" + id)
           .then((response) => {
             this.getData();
             this.$bvToast.hide("loadingToast");
@@ -398,6 +473,12 @@ module.exports = {
           .catch((error) => {
             console.log(error);
           });
+      }
+    },
+    mounted(){
+    this.key = localStorage.getItem("Authorization");
+      if (this.refreshData == true) {
+      this.getData();        
       }
     },
   },
